@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <canvas id="c", width="300", height="300"></canvas>
+    <script type="text/javascript">
+        var canvas = document.querySelector("#c");
+        var ctx = canvas.getContext("2d");
+        var width = canvas.width;
+        var height = canvas.height;
+
+        var image = new Image();
+        image.src = "kitten.jpg";
+        image.onload = function () {
+            ctx.drawImage(image, 0, 0, width, height);
+            var imageData = ctx.getImageData(0, 0, width, height);
+            // paintGreen(imageData);
+            greyScale(imageData);
+            // invert(imageData);
+        };
+
+        function greyScale(imageData) {
+            console.log("greyScale is called");
+            var dataArray = imageData.data;
+            var numPixels = dataArray.length / 4;
+            for (var i = 0; i < numPixels; i++) {
+                var avg = (dataArray[i * 4] + dataArray[i * 4 + 1] + dataArray[i * 4 + 2]) / 3;
+                dataArray[i * 4] = avg;
+                dataArray[i * 4 + 1] = avg;
+                dataArray[i * 4 + 2] = avg;
+            }
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+
+        function paintGreen(imageData) {
+            console.log("paintGreen is called");
+            var dataArray = imageData.data;
+            var numPixels = dataArray.length / 4;
+            for (var i = 0; i < numPixels; i += 10) {
+                dataArray[i * 4 + 1] = 255; // Green   
+                dataArray[i * 4 + 3] = 255; // alpha   
+            }
+            ctx.putImageData(imageData, 0, 0);
+        }   
+
+        function invert(imageData) {
+            console.log("invert is called");
+            var dataArray = imageData.data;
+            var numPixels = dataArray.length / 4;
+            for (var i = 0; i < numPixels; i++) {
+                imageData.data[i * 4 + 0] = 255 - imageData.data[i * 4 + 0];   //Red
+                imageData.data[i * 4 + 1] = 255 - imageData.data[i * 4 + 1];   //Green
+                imageData.data[i * 4 + 2] = 255 - imageData.data[i * 4 + 2];   //Blue
+            }
+            ctx.putImageData(imageData, 0, 0);
+        }
+    </script>
+</body>
+</html>
